@@ -185,6 +185,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="login.html">Login</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="employer-login.html">Employer</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -400,7 +403,23 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Certifications</label>
-                                    <textarea class="form-control" rows="3" placeholder="List any relevant certifications"></textarea>
+                                    <div class="mb-2">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="certificateType" id="certificateUrl" checked>
+                                            <label class="form-check-label" for="certificateUrl">Certificate URL</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="certificateType" id="certificateFile">
+                                            <label class="form-check-label" for="certificateFile">Upload Certificate</label>
+                                        </div>
+                                    </div>
+                                    <div id="certificateUrlInput">
+                                        <input type="url" class="form-control" placeholder="Enter certificate URL">
+                                    </div>
+                                    <div id="certificateFileInput" style="display: none;">
+                                        <input type="file" class="form-control" accept="image/*">
+                                        <small class="text-muted">Supported formats: JPG, PNG, PDF (Max size: 5MB)</small>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Additional Information</label>
@@ -560,6 +579,22 @@
             });
         });
 
+        // Certificate type toggle
+        document.querySelectorAll('input[name="certificateType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const urlInput = document.getElementById('certificateUrlInput');
+                const fileInput = document.getElementById('certificateFileInput');
+                
+                if (this.id === 'certificateUrl') {
+                    urlInput.style.display = 'block';
+                    fileInput.style.display = 'none';
+                } else {
+                    urlInput.style.display = 'none';
+                    fileInput.style.display = 'block';
+                }
+            });
+        });
+
         function updatePreview() {
             // Update name
             const firstName = document.querySelector('#step1 input[type="text"]').value;
@@ -597,6 +632,22 @@
             // Update skills
             const skills = document.querySelector('#step4 input[type="text"]').value;
             document.querySelectorAll('.preview-section-title')[3].nextElementSibling.textContent = skills;
+
+            // Update certificates
+            const certificateType = document.querySelector('input[name="certificateType"]:checked').id;
+            let certificateText = '';
+            
+            if (certificateType === 'certificateUrl') {
+                certificateText = document.querySelector('#certificateUrlInput input').value;
+            } else {
+                const fileInput = document.querySelector('#certificateFileInput input');
+                if (fileInput.files.length > 0) {
+                    certificateText = `Certificate: ${fileInput.files[0].name}`;
+                }
+            }
+            
+            document.querySelectorAll('.preview-section-title')[3].nextElementSibling.textContent = 
+                `${skills}\n\nCertificates:\n${certificateText}`;
         }
     </script>
 </body>
